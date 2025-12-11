@@ -17,6 +17,7 @@ class Game:
         self.load_images()
         self.character()
         self.set_timer()
+        self.set_counter()
         self.spawn_diamond()
         # self.spawn_bricks()
         self.spawn_monsters()
@@ -70,6 +71,8 @@ class Game:
     def set_timer(self):
         self.timer = Timer()
 
+    def set_counter(self):
+        self.counter = Counter()
     # def spawn_bricks(self):
     #     self.bricks = []
     #     amount = 50
@@ -148,6 +151,9 @@ class Game:
 
         self.screen.blit(self.timer.font.render(self.timer.text, True, (255,255,255)),(1170,40))
 
+
+
+        self.screen.blit(self.counter.font.render(self.counter.textstr, True, (255,255,255)),(100,40))
         # for brick in self.bricks:
         #     brick.update(self.world_offset)
         #     brick.screen_update(self.screen)
@@ -156,10 +162,27 @@ class Game:
             diamond.update(self.world_offset)
             diamond.screen_update(self.screen)
 
+        for diamond in self.diamonds:
+            if self.char_rect.x <= diamond.rect.x + diamond.image.get_width() and self.char_rect.x + self.char.get_width() >= diamond.rect.x+20:
+                self.diamonds.remove(diamond)
+                self.counter.text += 1
+                self.counter.textstr = f"{str(self.counter.text)}/10".rjust(5)
+
         for monster in self.monsters:
             monster.update(self.world_offset)
             monster.screen_update(self.screen)
-
+        for monster in self.monsters:
+            if self.char_rect.colliderect(monster.rect):
+                self.monsters.remove(monster)
+        if self.counter.text == 10:
+            fade = pygame.Surface((self.screen.get_width(), self.screen.get_height()))
+            fade.fill((0,0,0))
+            fade.set_alpha(240)
+            self.screen.blit(fade, (0,0))
+            font = pygame.font.SysFont('Arial', 100)
+            text_surf = font.render('VOITIT PELIN', True, (0,128,0))
+            text_rect = text_surf.get_rect(center = (self.screen.get_width()//2, self.screen.get_height()//2))
+            self.screen.blit(text_surf, text_rect)
         pygame.display.flip()
 
 
@@ -215,6 +238,11 @@ class Timer:
         pygame.time.set_timer(pygame.USEREVENT, 1000)
         self.font = pygame.font.SysFont('Arial', 50)
 
+class Counter:
+    def __init__(self):
+        self.text = 0
+        self.textstr = f"{str(self.text)}/10".rjust(5)
+        self.font = pygame.font.SysFont('Arial', 50)
 # class Bricks:
         def __init__(self, image, world_x, y):
             self.image = pygame.transform.scale(image,(70,70))
