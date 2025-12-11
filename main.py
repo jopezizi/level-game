@@ -13,7 +13,9 @@ class Game:
 
         self.load_images()
         self.character()
-        self.diamonds()
+        self.set_timer()
+        self.spawn_diamond()
+        self.spawn_bricks()
         self.run()
 
 
@@ -34,16 +36,38 @@ class Game:
         self.char_rect = self.char.get_rect()
         self.char_rect.bottomleft = (170,self.screen.get_height()-60)
 
-    def diamonds(self):
-
-
     def spawn_diamond(self):
+        self.diamonds = []
+        amount = 50
+        for i in range(amount):
+            x = random.randint(500, 20000)
+            y = self.screen.get_height()-130
+            self.diamonds.append(
+                Diamonds(self.images["diamond"],x,y)
+            )
+    
+    def set_timer(self):
+        self.timer = Timer()
+
+    def spawn_bricks(self):
+        self.bricks = []
+        amount = 50
+        for i in range(amount):
+            x = random.randint(500, 20000)
+            y = 540
+            self.bricks.append(
+                Bricks(self.images["brick"],x,y)
+            )
+
 
 
     def run(self):
         runs = True
         while runs:
             for tapahtuma in pygame.event.get():
+                if tapahtuma.type == pygame.USEREVENT:
+                    self.timer.countdown -= 1
+                    self.timer.text = str(self.timer.countdown).rjust(3) if self.timer.countdown > 0 else '0'
                 if tapahtuma.type == pygame.QUIT:
                     runs = False
             #näppäimistön liike
@@ -58,7 +82,7 @@ class Game:
             #if keys[pygame.K_DOWN] or keys[pygame.K_s]:
             #    self.move(3, 0)
 
-
+            
             self.screen_update()
             self.clock.tick(60)
         pygame.quit()
@@ -88,13 +112,41 @@ class Game:
 
         self.screen.blit(self.char, (self.char_rect.x, self.char_rect.y))
 
+        self.screen.blit(self.timer.font.render(self.timer.text, True, (255,255,255)),(1170,40))
         pygame.display.flip()
 
 
 class Diamonds:
+    def __init__(self, image, world_x, y):
+        self.image = pygame.transform.scale(image,(60,60))
+        self.world_x = world_x
+        self.y = y
+
+        self.rect = self.image.get_rect()
+        self.rect.y = y
+
+    def update(self, world_x):
+        self.rect.x = self.world_x + world_x
+    
+    def screen_update(self, screen):
+        screen.blit(self.image, self.rect)
 
 class Traps:
     pass
 
+class Timer:
+    def __init__(self):
+        self.countdown, self.text = 100 , '100'.rjust(3)
+        pygame.time.set_timer(pygame.USEREVENT, 1000)
+        self.font = pygame.font.SysFont('Arial', 50)
+
+class Bricks:
+        def __init__(self, image, world_x, y):
+        self.image = pygame.transform.scale(image,(60,60))
+        self.world_x = world_x
+        self.y = y
+
+        self.rect = self.image.get_rect()
+        self.rect.y = y
 if __name__ == "__main__":
     Game()
