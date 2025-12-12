@@ -19,7 +19,6 @@ class Game:
         self.set_timer()
         self.set_counter()
         self.spawn_diamond()
-        # self.spawn_bricks()
         self.spawn_monsters()
         self.run()
 
@@ -73,18 +72,7 @@ class Game:
 
     def set_counter(self):
         self.counter = Counter()
-    # def spawn_bricks(self):
-    #     self.bricks = []
-    #     amount = 50
-    #     x = 500
-    #     for i in range(amount):
-    #         brick_gap = random.randint(400,2000)
 
-    #         x += brick_gap
-    #         y = 590
-    #         self.bricks.append(
-    #             Bricks(self.images["brick"],x,y)
-    #         )
 
 
 
@@ -104,10 +92,6 @@ class Game:
                 self.move(+6)
             if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
                 self.move(-6)
-            #if keys[pygame.K_UP] or keys[pygame.K_w]:
-            #    self.move(-3, 0)
-            #if keys[pygame.K_DOWN] or keys[pygame.K_s]:
-            #    self.move(3, 0)
 
             
             self.screen_update()
@@ -154,9 +138,7 @@ class Game:
 
 
         self.screen.blit(self.counter.font.render(self.counter.textstr, True, (255,255,255)),(100,40))
-        # for brick in self.bricks:
-        #     brick.update(self.world_offset)
-        #     brick.screen_update(self.screen)
+
 
         for diamond in self.diamonds:
             diamond.update(self.world_offset)
@@ -243,19 +225,6 @@ class Counter:
         self.text = 0
         self.textstr = f"{str(self.text)}/10".rjust(5)
         self.font = pygame.font.SysFont('Arial', 50)
-# class Bricks:
-        def __init__(self, image, world_x, y):
-            self.image = pygame.transform.scale(image,(70,70))
-            self.world_x = world_x
-            self.y = y
 
-            self.rect = self.image.get_rect()
-            self.rect.y = y
-        
-        def update(self,world_x):
-            self.rect.x = self.world_x + world_x
-
-        def screen_update(self, screen):
-            screen.blit(self.image, self.rect)
 if __name__ == "__main__":
     Game()
