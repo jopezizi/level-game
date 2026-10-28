@@ -1,3 +1,3 @@
-﻿# level-game
+# Level game
 
-Simple game submission for TKT10003 Ohjelmoinnin jatkokurssi 
+A simple Python game created for the Programming II course (TKT10003).
